@@ -1,33 +1,48 @@
-#include <iostream>
-#include <Eigen\Dense>
+#include<cmath>
+#include<Eigen/Core>
+#include<Eigen/Dense>
+#include<iostream>
 
-using namespace std;
+int main() {
 
-typedef Eigen::Matrix<int, 3, 3> Matrix3i;
+    // Basic Example of cpp
+    std::cout << "Example of cpp \n";
+    float a = 1.0, b = 2.0;
+    std::cout << a << std::endl;
+    std::cout << a / b << std::endl;
+    std::cout << std::sqrt(b) << std::endl;
+    std::cout << std::acos(-1) << std::endl;
+    std::cout << std::sin(30.0 / 180.0 * acos(-1)) << std::endl;
 
-int main()
-{
-    /*
-    Matrix的初始化方法
-    Eigen::Matrix<int, 3, 3>
-    int 代表Matrix的数据类型，3，3 分别代表 rows， cols
-    Matrix3i m1;
-    m1(0,0) = 1
-    m1(0,1) = 2
-    m1(0,2) = 3
-    ...
-    或者用 m1 << 1,2,3 ...
-    */
+    // Example of vector
+    std::cout << "Example of vector \n";
+    // vector definition
+    Eigen::Vector3f v(1.0f, 2.0f, 3.0f);
+    Eigen::Vector3f w(1.0f, 0.0f, 0.0f);
+    // vector output
+    std::cout << "Example of output \n";
+    std::cout << v << std::endl;
+    // vector add
+    std::cout << "Example of add \n";
+    std::cout << v + w << std::endl;
+    // vector scalar multiply
+    std::cout << "Example of scalar multiply \n";
+    std::cout << v * 3.0f << std::endl;
+    std::cout << 2.0f * v << std::endl;
 
-    Matrix3i m1;
-    m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-    cout << "m1 = \n" << m1 << endl;
-
-    Matrix3i m2;
-    m2 << 1, 0, 0, 0, 1, 0, 0, 0, 1;
-    cout << "m2 = \n" << m2 << endl;
-
-    cout << "m1 * m2 = \n" << (m1 * m2) << endl;
+    // Example of matrix
+    std::cout << "Example of matrix \n";
+    // matrix definition
+    Eigen::Matrix3f i, j;
+    i << 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0;
+    j << 2.0, 3.0, 1.0, 4.0, 6.0, 5.0, 9.0, 7.0, 8.0;
+    // matrix output
+    std::cout << "Example of output \n";
+    std::cout << i << std::endl;
+    // matrix add i + j
+    // matrix scalar multiply i * 2.0
+    // matrix multiply i * j
+    // matrix multiply vector i * v
 
     while (true) {
 
