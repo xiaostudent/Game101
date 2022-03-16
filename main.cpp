@@ -2,11 +2,11 @@
 #include<Eigen/Core>
 #include<Eigen/Dense>
 #include<iostream>
+#include "src/base/FileUtil.h"
 #include <opencv2/opencv.hpp>
 using namespace cv;
 int main() {
-
-    Mat image = imread("D:/game/cocos2d-x/test/Game101/terrain5.png");
+    Mat image = imread(FileUtil::getRootPath().append("res/awesomeface.png"));
     if (image.empty()) {
         printf("could not load image...\n");
         return -1;

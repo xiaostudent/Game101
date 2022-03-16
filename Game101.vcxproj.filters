@@ -16,10 +16,21 @@
     <Filter Include="源文件\src">
       <UniqueIdentifier>{7544cbec-fe0f-494c-9913-f4e2d4e02693}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\src\base">
+      <UniqueIdentifier>{2c8d7ac6-33aa-484b-a93c-a86698d1f0ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\base\FileUtil.cpp">
+      <Filter>源文件\src\base</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\base\FileUtil.h">
+      <Filter>源文件\src\base</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
