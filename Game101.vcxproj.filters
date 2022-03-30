@@ -19,6 +19,12 @@
     <Filter Include="源文件\src\base">
       <UniqueIdentifier>{2c8d7ac6-33aa-484b-a93c-a86698d1f0ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\src\assignment">
+      <UniqueIdentifier>{75a09b78-1aa6-41da-9975-9e8eeb4854dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\src\assignment\1">
+      <UniqueIdentifier>{2eb87332-c146-49ba-a8a1-a38b66dcfe6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,10 +33,25 @@
     <ClCompile Include="src\base\FileUtil.cpp">
       <Filter>源文件\src\base</Filter>
     </ClCompile>
+    <ClCompile Include="src\base\Assignment.cpp">
+      <Filter>源文件\src\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assignment\1\rasterizer.cpp">
+      <Filter>源文件\src\assignment\1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\FileUtil.h">
       <Filter>源文件\src\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\Assignment.h">
+      <Filter>源文件\src\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\assignment\1\Assignment1.h">
+      <Filter>源文件\src\assignment\1</Filter>
+    </ClInclude>
+    <ClInclude Include="src\assignment\1\rasterizer.h">
+      <Filter>源文件\src\assignment\1</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

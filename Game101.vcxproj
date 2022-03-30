@@ -20,9 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\assignment\1\rasterizer.cpp" />
+    <ClCompile Include="src\base\Assignment.cpp" />
     <ClCompile Include="src\base\FileUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\assignment\1\Assignment1.h" />
+    <ClInclude Include="src\assignment\1\rasterizer.h" />
+    <ClInclude Include="src\base\Assignment.h" />
     <ClInclude Include="src\base\FileUtil.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -85,7 +90,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src\;$(ProjectDir)include\;$(IncludePath)</IncludePath>
     <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(ProjectDir)lib\x64\vc15\lib;$(ProjectDir)lib\x64\vc15\bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
