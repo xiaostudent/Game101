@@ -10,6 +10,7 @@
 #include <math.h>
 #include<Eigen/Core>
 #include<Eigen/Dense>
+#include <tuple>
 
 
 rst::pos_buf_id rst::rasterizer::load_positions(const std::vector<Eigen::Vector3f> &positions)
@@ -139,8 +140,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
 
     auto v = t.toVector4();
     
-
-    int minx = width, miny = height, maxx = 0, maxy = 0;
+    int minx = width-1, miny = height-1, maxx = 0, maxy = 0;
     for (auto& vert : v)
     {
         if (vert.x() < minx) {
@@ -160,6 +160,11 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
         }
     }
 
+    minx = MIN(MAX(0, minx), width - 1);  // ·¶Î§0-width-1
+    miny = MIN(MAX(0, miny), height - 1);  // ·¶Î§0-height-1
+    maxx = MAX(MIN(maxx, width - 1),0);
+    maxy = MAX(MIN(maxy, height - 1), 0);
+
     draw_point(Eigen::Vector3f(minx, miny, 1.0f), Eigen::Vector3f(t.color[0].x()*255, t.color[0].y() * 255, t.color[0].z() * 255),5);
     draw_point(Eigen::Vector3f(minx, maxy, 1.0f), Eigen::Vector3f(t.color[0].x() * 255, t.color[0].y() * 255, t.color[0].z() * 255), 5);
     draw_point(Eigen::Vector3f(maxx, miny, 1.0f), Eigen::Vector3f(t.color[0].x() * 255, t.color[0].y() * 255, t.color[0].z() * 255), 5);
@@ -170,7 +175,19 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
     {
         for (size_t j = miny; j <= maxy; j++) {
             if (insideTriangle(i+0.5, j+0.5, t.v)) {
-                set_pixel(Eigen::Vector3f(i, j, 1.0f), Eigen::Vector3f(t.color[0].x() * 255, t.color[0].y() * 255, t.color[0].z() * 255));
+                auto my_turple = computeBarycentric2D(i + 0.5, j + 0.5, t.v);
+                float alpha=std::get<0>(my_turple);
+                float beta = std::get<0>(my_turple);
+                float gamma = std::get<0>(my_turple);
+                float w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
+                float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
+                z_interpolated *= w_reciprocal;
+                float cur_z = depth_buf[get_index(i,j)];
+                if (z_interpolated < cur_z)
+                {
+                    set_pixel(Eigen::Vector3f(i, j, 1.0f), Eigen::Vector3f(t.color[0].x() * 255, t.color[0].y() * 255, t.color[0].z() * 255));
+                    depth_buf[get_index(i, j)] = z_interpolated;
+                }
             }
         }
     }
@@ -230,7 +247,9 @@ void rst::rasterizer::set_pixel(const Eigen::Vector3f& point, const Eigen::Vecto
 {
     //old index: auto ind = point.y() + point.x() * width;
     if (point.x() < 0 || point.x() >= width ||
-        point.y() < 0 || point.y() >= height) return;
+        point.y() < 0 || point.y() >= height) {
+        return;
+    }
     auto ind = (height-1-point.y())*width + point.x();
     frame_buf[ind] = color;
 
