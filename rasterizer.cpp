@@ -42,23 +42,24 @@ auto to_vec4(const Eigen::Vector3f& v3, float w = 1.0f)
     return Vector4f(v3.x(), v3.y(), v3.z(), w);
 }
 
-double product(Vector2f p1, Vector2f p2, Vector2f p3) {
+////////////////////////////////////////////////
+double product(const Vector3f& p1, const Vector3f& p2, const Vector3f& p3) {
     return (p2.x() - p1.x()) * (p3.y() - p1.y()) - (p2.y() - p1.y()) * (p3.x() - p1.x());
 }
 
-bool isInTriangle(Vector2f p1, Vector2f p2, Vector2f p3, Vector2f o) {
+bool isInTriangle(const Vector3f& p1, const Vector3f& p2, const Vector3f& p3, const Vector3f& o) {
     if (product(p1, p2, p3) < 0) return isInTriangle(p1, p3, p2, o);
     if (product(p1, p2, o) > 0 && product(p2, p3, o) > 0 && product(p3, p1, o) > 0)
         return true;
     return false;
 }
+////////////////////////////////////////////////
 
-
-static bool insideTriangle(int x, int y, const Vector3f* _v)
+static bool insideTriangle(float x, float y, const Vector3f* _v)  //hjx
 {   
     // TODO : Implement this function to check if the point (x, y) is inside the triangle represented by _v[0], _v[1], _v[2]
     bool inside = false;
-    inside = isInTriangle(Vector2f(_v[0].x(), _v[0].y()), Vector2f(_v[1].x(), _v[1].y()), Vector2f(_v[2].x(), _v[2].y()), Vector2f(x,y));
+    inside = isInTriangle(_v[0], _v[1], _v[2], Vector3f(x,y,0));
     return inside;
 }
 
@@ -127,16 +128,19 @@ void rst::rasterizer::draw_point(const Eigen::Vector3f& point, const Eigen::Vect
     {
         for (size_t j = 0; j < 2*size; j++)
         {
-            set_pixel(Eigen::Vector3f(point00.x()+i, point00.y()+j, 1.0f), color);
+            for (size_t k = 0; k < samplingCount; k++)
+            {
+                set_pixel(Eigen::Vector3f(point00.x() + i, point00.y() + j, 1.0f), color,k);
+            }
         }
     }
 }
 
 //Screen space rasterization
 void rst::rasterizer::rasterize_triangle(const Triangle& t) {
-    draw_line(t.v[2], t.v[0]);
-    draw_line(t.v[2], t.v[1]);
-    draw_line(t.v[1], t.v[0]);
+    //draw_line(t.v[2], t.v[0]);
+    //draw_line(t.v[2], t.v[1]);
+    //draw_line(t.v[1], t.v[0]);
 
     auto v = t.toVector4();
     
@@ -165,28 +169,38 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
     maxx = MAX(MIN(maxx, width - 1),0);
     maxy = MAX(MIN(maxy, height - 1), 0);
 
-    draw_point(Eigen::Vector3f(minx, miny, 1.0f), Eigen::Vector3f(t.color[0].x()*255, t.color[0].y() * 255, t.color[0].z() * 255),5);
+    draw_point(Eigen::Vector3f(minx, miny, 1.0f), Eigen::Vector3f(t.color[0].x() * 255, t.color[0].y() * 255, t.color[0].z() * 255), 5);
     draw_point(Eigen::Vector3f(minx, maxy, 1.0f), Eigen::Vector3f(t.color[0].x() * 255, t.color[0].y() * 255, t.color[0].z() * 255), 5);
     draw_point(Eigen::Vector3f(maxx, miny, 1.0f), Eigen::Vector3f(t.color[0].x() * 255, t.color[0].y() * 255, t.color[0].z() * 255), 5);
     draw_point(Eigen::Vector3f(maxx, maxy, 1.0f), Eigen::Vector3f(t.color[0].x() * 255, t.color[0].y() * 255, t.color[0].z() * 255), 5);
 
-
+    int size = sampling_list.size();
+    float dx, dy, alpha, beta, gamma, w_reciprocal, z_interpolated, cur_z;
+    Eigen::Vector3f color = t.getColor();
     for (size_t i = minx; i <= maxx; i++)
     {
         for (size_t j = miny; j <= maxy; j++) {
-            if (insideTriangle(i+0.5, j+0.5, t.v)) {
-                auto my_turple = computeBarycentric2D(i + 0.5, j + 0.5, t.v);
-                float alpha=std::get<0>(my_turple);
-                float beta = std::get<0>(my_turple);
-                float gamma = std::get<0>(my_turple);
-                float w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
-                float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
-                z_interpolated *= w_reciprocal;
-                float cur_z = depth_buf[get_index(i,j)];
-                if (z_interpolated < cur_z)
-                {
-                    set_pixel(Eigen::Vector3f(i, j, 1.0f), Eigen::Vector3f(t.color[0].x() * 255, t.color[0].y() * 255, t.color[0].z() * 255));
-                    depth_buf[get_index(i, j)] = z_interpolated;
+            Eigen::Vector3f point(i, j, 0);
+            for (size_t k = 0; k < samplingCount; k++)
+            {
+                if (size > k) {
+                    dx = sampling_list[k].x();
+                    dy = sampling_list[k].y();
+                    if (insideTriangle(i + dx, j + dy, t.v)) {
+                        auto my_turple = computeBarycentric2D(i + dx, j + dy, t.v);
+                        alpha=std::get<0>(my_turple);
+                        beta = std::get<0>(my_turple);
+                        gamma = std::get<0>(my_turple);
+                        w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
+                        z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
+                        z_interpolated *= w_reciprocal;
+                        cur_z = getDepth(point,k);
+                        if (z_interpolated < cur_z)
+                        {
+                            set_pixel(point, color ,k);
+                            setDepth(point, z_interpolated, k);
+                        }
+                    }
                 }
             }
         }
@@ -225,6 +239,7 @@ void rst::rasterizer::clear(rst::Buffers buff)
     if ((buff & rst::Buffers::Color) == rst::Buffers::Color)
     {
         std::fill(frame_buf.begin(), frame_buf.end(), Eigen::Vector3f{0, 0, 0});
+        std::fill(sampling_frame_buf.begin(), sampling_frame_buf.end(), Eigen::Vector3f{ 0, 0, 0 });
     }
     if ((buff & rst::Buffers::Depth) == rst::Buffers::Depth)
     {
@@ -235,7 +250,14 @@ void rst::rasterizer::clear(rst::Buffers buff)
 rst::rasterizer::rasterizer(int w, int h) : width(w), height(h)
 {
     frame_buf.resize(w * h);
-    depth_buf.resize(w * h);
+    depth_buf.resize(w * h * samplingCount);
+    sampling_frame_buf.resize(w * h * samplingCount);
+
+    sampling_list.resize(samplingCount);
+    sampling_list[0] = { 0.25,0.25,0 };
+    sampling_list[1] = { 0.25,0.75,0 };
+    sampling_list[2] = { 0.75,0.25,0 };
+    sampling_list[3] = { 0.75,0.75,0 };
 }
 
 int rst::rasterizer::get_index(int x, int y)
@@ -243,16 +265,58 @@ int rst::rasterizer::get_index(int x, int y)
     return (height-1-y)*width + x;
 }
 
-void rst::rasterizer::set_pixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color)
+
+float rst::rasterizer::getDepth(const Eigen::Vector3f& point, int samplingIndex) {
+    if (point.x() < 0 || point.x() >= width ||
+        point.y() < 0 || point.y() >= height) {
+        return std::numeric_limits<float>::infinity();
+    }
+
+    samplingIndex = MAX(MIN(samplingIndex, samplingCount - 1), 0);
+
+    auto ind = (height - 1 - point.y()) * width * samplingCount + point.x() * samplingCount;
+    return depth_buf[ind + samplingIndex];
+}
+
+void rst::rasterizer::setDepth(const Eigen::Vector3f& point, const float depth, int samplingIndex) {
+    if (point.x() < 0 || point.x() >= width ||
+        point.y() < 0 || point.y() >= height) {
+        return;
+    }
+
+    samplingIndex = MAX(MIN(samplingIndex, samplingCount - 1), 0);
+
+    auto ind = (height - 1 - point.y()) * width * samplingCount + point.x() * samplingCount;
+    depth_buf[ind + samplingIndex] = depth;
+}
+
+void rst::rasterizer::set_pixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color,int samplingIndex)
 {
     //old index: auto ind = point.y() + point.x() * width;
     if (point.x() < 0 || point.x() >= width ||
         point.y() < 0 || point.y() >= height) {
         return;
     }
-    auto ind = (height-1-point.y())*width + point.x();
-    frame_buf[ind] = color;
 
+    samplingIndex = MAX(MIN(samplingIndex, samplingCount - 1),0);
+
+    auto ind = (height-1-point.y())*width*samplingCount + point.x()* samplingCount;
+    sampling_frame_buf[ind+ samplingIndex] = color;
+
+}
+
+Eigen::Vector3f& rst::rasterizer::get_pixel(const Eigen::Vector3f& point, int samplingIndex)
+{
+    //old index: auto ind = point.y() + point.x() * width;
+    if (point.x() < 0 || point.x() >= width ||
+        point.y() < 0 || point.y() >= height) {
+        return sampling_frame_buf[0];
+    }
+
+    samplingIndex = MAX(MIN(samplingIndex, samplingCount - 1), 0);
+
+    auto ind = (height - 1 - point.y()) * width * samplingCount + point.x() * samplingCount;
+    return sampling_frame_buf[ind + samplingIndex]; 
 }
 
 // Bresenham's line drawing algorithm
@@ -290,7 +354,7 @@ void rst::rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
             xe = x1;
         }
         Eigen::Vector3f point = Eigen::Vector3f(x, y, 1.0f);
-        set_pixel(point, line_color);
+        set_pixel(point, line_color,0);
         for (i = 0; x < xe; i++)
         {
             x = x + 1;
@@ -312,7 +376,7 @@ void rst::rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
             }
             //            delay(0);
             Eigen::Vector3f point = Eigen::Vector3f(x, y, 1.0f);
-            set_pixel(point, line_color);
+            set_pixel(point, line_color,0);
         }
     }
     else//Ð±ÂÊ´óÓÚ1
@@ -330,7 +394,7 @@ void rst::rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
             ye = y1;
         }
         Eigen::Vector3f point = Eigen::Vector3f(x, y, 1.0f);
-        set_pixel(point, line_color);
+        set_pixel(point, line_color,0);
         for (i = 0; y < ye; i++)
         {
             y = y + 1;
@@ -352,7 +416,7 @@ void rst::rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
             }
             //            delay(0);
             Eigen::Vector3f point = Eigen::Vector3f(x, y, 1.0f);
-            set_pixel(point, line_color);
+            set_pixel(point, line_color,0);
         }
     }
 }
