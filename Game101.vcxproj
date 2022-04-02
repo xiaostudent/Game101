@@ -20,15 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\assignment\1\rasterizer.cpp" />
-    <ClCompile Include="src\base\Assignment.cpp" />
-    <ClCompile Include="src\base\FileUtil.cpp" />
+    <ClCompile Include="rasterizer.cpp" />
+    <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\assignment\1\Assignment1.h" />
-    <ClInclude Include="src\assignment\1\rasterizer.h" />
-    <ClInclude Include="src\base\Assignment.h" />
-    <ClInclude Include="src\base\FileUtil.h" />
+    <ClInclude Include="rasterizer.hpp" />
+    <ClInclude Include="Triangle.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

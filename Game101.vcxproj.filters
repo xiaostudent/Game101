@@ -13,45 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="源文件\src">
-      <UniqueIdentifier>{7544cbec-fe0f-494c-9913-f4e2d4e02693}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\src\base">
-      <UniqueIdentifier>{2c8d7ac6-33aa-484b-a93c-a86698d1f0ba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\src\assignment">
-      <UniqueIdentifier>{75a09b78-1aa6-41da-9975-9e8eeb4854dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\src\assignment\1">
-      <UniqueIdentifier>{2eb87332-c146-49ba-a8a1-a38b66dcfe6e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\base\FileUtil.cpp">
-      <Filter>源文件\src\base</Filter>
+    <ClCompile Include="rasterizer.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\base\Assignment.cpp">
-      <Filter>源文件\src\base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\assignment\1\rasterizer.cpp">
-      <Filter>源文件\src\assignment\1</Filter>
+    <ClCompile Include="Triangle.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\base\FileUtil.h">
-      <Filter>源文件\src\base</Filter>
+    <ClInclude Include="rasterizer.hpp">
+      <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\base\Assignment.h">
-      <Filter>源文件\src\base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\assignment\1\Assignment1.h">
-      <Filter>源文件\src\assignment\1</Filter>
-    </ClInclude>
-    <ClInclude Include="src\assignment\1\rasterizer.h">
-      <Filter>源文件\src\assignment\1</Filter>
+    <ClInclude Include="Triangle.hpp">
+      <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
