@@ -23,7 +23,7 @@ Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
 Eigen::Matrix4f get_model_matrix(float rotation_angle)
 {
     Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
-
+    rotation_angle = rotation_angle * MY_PI / 180.0f;
     model << cos(rotation_angle), -sin(rotation_angle), 0, 0,
              sin(rotation_angle), cos(rotation_angle), 0, 0,
              0, 0, 1, 0,
@@ -31,6 +31,19 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle)
     // TODO: Implement this function
     // Create the model matrix for rotating the triangle around the Z axis.
     // Then return it.
+
+    return model;
+}
+
+
+Eigen::Matrix4f get_rotation(Vector3f axis, float angle)
+{
+    Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
+    angle = angle * MY_PI / 180.0f;
+    model << cos(angle)+(1-cos(angle))*axis.x() * axis.x(), (1 - cos(angle))* axis.x()* axis.y()- axis.z()*sin(angle), (1 - cos(angle))* axis.x()* axis.z() + axis.y() * sin(angle), 0,
+            (1 - cos(angle))* axis.x()* axis.y() + axis.z() * sin(angle), cos(angle)+ (1 - cos(angle)) * axis.y() * axis.y(), (1 - cos(angle))* axis.y()* axis.z() - axis.x() * sin(angle), 0,
+            (1 - cos(angle))* axis.x()* axis.z() - axis.y() * sin(angle), (1 - cos(angle))* axis.y()* axis.z() + axis.x() * sin(angle), cos(angle) + (1 - cos(angle)) * axis.z() * axis.z(), 0,
+             0, 0, 0, 1;
 
     return model;
 }
@@ -101,7 +114,8 @@ int main(int argc, const char** argv)
     while (key != 27) {
         r.clear(rst::Buffers::Color | rst::Buffers::Depth);
 
-        r.set_model(get_model_matrix(angle));
+        //r.set_model(get_model_matrix(angle));
+        r.set_model(get_rotation(Vector3f(0,0,1),angle));
         r.set_view(get_view_matrix(eye_pos));
         r.set_projection(get_projection_matrix(45, 1, 0.1, 50));
 
