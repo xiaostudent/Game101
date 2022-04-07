@@ -24,12 +24,27 @@
     <ClCompile Include="Triangle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rasterizer.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="global.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="OBJ_Loader.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
